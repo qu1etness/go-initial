@@ -6,7 +6,6 @@ import (
 )
 
 func main() {
-
 	initialName, initialSurname := getInitials("Roman Kostiv")
 	fmt.Println(initialName, initialSurname)
 
@@ -19,5 +18,5 @@ func getInitials(str string) (string, string) {
 	if len(splited) < 2 {
 		return string(splited[0][0]), "_"
 	}
-	return string(splited[0][0]), string(splited[1][0])
+	return string(rune(splited[0][0])), string(rune(splited[1][0]))
 }
