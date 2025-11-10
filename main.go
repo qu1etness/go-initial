@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -23,13 +24,17 @@ func infiniteCalculation() {
 			var discard string
 			fmt.Scan(&discard)
 			fmt.Println("Invalid input, try again")
-			continue
+			panic("Invalid input")
 		}
 
 		switch enterValue {
 		case 1:
 			userMass, userHeight := getInputValue()
-			index := calculateIndex(userMass, userHeight)
+			index, err := calculateIndex(userMass, userHeight)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
 			showInfo(userMass, userHeight, index)
 		case 2:
 			fmt.Println("Goodbye!")
@@ -48,9 +53,12 @@ func getInputValue() (userMass float32, userHeight float32) {
 	fmt.Scan(&userHeight)
 	return
 }
-func calculateIndex(userMass float32, userHeight float32) float32 {
-	var index float32 = userMass / (userHeight * userHeight)
-	return index
+func calculateIndex(userMass float32, userHeight float32) (float32, error) {
+	if userMass <= 0 && userHeight <= 0 {
+		return 0, errors.New("Invalid options")
+	}
+	var index = userMass / (userHeight * userHeight)
+	return index, nil
 }
 func showInfo(userMass float32, userHeight float32, index float32) {
 	fmt.Printf("User with %.0f kg mass and %0.2f m height has %0.1f index \n", userMass, userHeight, index)
