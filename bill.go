@@ -29,3 +29,15 @@ func (b *bill) format() string {
 	result += fmt.Sprintf("%-25v ...%0.2f", "total:", total)
 	return result
 }
+
+func (b *bill) addItem(key string, value float32) float32 {
+
+	b.items[key] = value
+
+	return b.items[key]
+}
+
+func (b *bill) addTip(tip float32) float32 {
+	b.tip += tip
+	return b.tip
+}
