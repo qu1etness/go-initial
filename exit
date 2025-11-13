@@ -1,0 +1,13 @@
+warning: in the working copy of 'main.go', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/main.go b/main.go[m
+[1mindex 04f84fa..97b864a 100644[m
+[1m--- a/main.go[m
+[1m+++ b/main.go[m
+[36m@@ -35,6 +35,7 @@[m [mfunc infiniteCalculation() {[m
+ 				fmt.Println(err)[m
+ 				continue[m
+ 			}[m
+[32m+[m
+ 			showInfo(userMass, userHeight, index)[m
+ 		case 2:[m
+ 			fmt.Println("Goodbye!")[m
