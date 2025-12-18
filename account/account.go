@@ -1,12 +1,13 @@
-package main
+package account
 
 import (
 	"errors"
-	"fmt"
 	"math/rand"
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 type account struct {
@@ -17,20 +18,20 @@ type account struct {
 
 // Вбудовування (Унаслідування)
 
-type AccountWithTimeStamp struct {
+type WithTimeStamp struct {
 	createdAt time.Time
 	updatedAt time.Time
 	account
 }
 
-type AccountWithTimeStampAnalog struct {
+type WithTimeStampAnalog struct {
 	createdAt time.Time
 	updatedAt time.Time
 	acc       account
 }
 
 func (a *account) outputPassword() {
-	fmt.Println(a.password)
+	color.Blue(a.password)
 }
 
 func (a *account) generatePassword(length int) string {
@@ -66,7 +67,9 @@ func newUser(name, password, urlString string) (*account, error) {
 	return &user, nil
 }
 
-func NewUserWithTimeStamp(name, password, urlString string) (*AccountWithTimeStamp, error) {
+// Інкапсуляція (public/private) через великі/малі літери
+
+func NewUserWithTimeStamp(name, password, urlString string) (*WithTimeStamp, error) {
 
 	if name == "" {
 		return nil, errors.New("THE_NAME_IS_EMPTY")
@@ -78,7 +81,7 @@ func NewUserWithTimeStamp(name, password, urlString string) (*AccountWithTimeSta
 		return nil, errors.New("THE_URL_IS_INVALID")
 	}
 
-	user := AccountWithTimeStamp{
+	user := WithTimeStamp{
 		account:   account{name: name, url: urlString, password: password},
 		createdAt: time.Now(),
 		updatedAt: time.Now(),

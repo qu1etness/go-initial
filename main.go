@@ -1,8 +1,6 @@
 package main
 
-import (
-	"fmt"
-)
+import "go-initial/files"
 
 func main() {
 
@@ -17,12 +15,14 @@ func main() {
 	//fmt.Println(strings.Repeat("-", 20))
 	//fmt.Println(generatePassword(10))
 
-	modernUser, err := NewUserWithTimeStamp("Ivan", "", "https://ivan.ua")
+	//modernUser, err := account.NewUserWithTimeStamp("Ivan", "", "https://ivan.ua")
+	//
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	//fmt.Println(modernUser)
 
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println(modernUser)
+	files.WriteFile("Hello World, from GoLang!", "hello.txt")
 
 }
