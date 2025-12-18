@@ -6,18 +6,24 @@ import (
 	"github.com/fatih/color"
 )
 
-func ReadFile() {
+func ReadFile(fileName string) (string, error) {
+	data, err := os.ReadFile(fileName)
 
+	if err != nil {
+		return "", err
+	}
+
+	return string(data), nil
 }
 
-func WriteFile(content string, fileName string) {
+func WriteFile(content []byte, fileName string) {
 	file, err := os.Create(fileName)
 
 	if err != nil {
 		color.Red("Failed to create file:", err)
 	}
 
-	_, err = file.WriteString(content)
+	_, err = file.Write(content)
 
 	defer file.Close()
 	if err != nil {

@@ -1,28 +1,59 @@
 package main
 
-import "go-initial/files"
+import (
+	"bufio"
+	"fmt"
+	"go-initial/account"
+	"go-initial/files"
+	"os"
+	"strings"
+
+	"github.com/fatih/color"
+)
 
 func main() {
+	createAccount()
+}
 
-	//fmt.Println(newUser("Roman", "", "https://roman.ua"))
+func createAccount() {
+	reader := bufio.NewReader(os.Stdin)
 
-	//newUser := account{}
-	//
-	//newUser.generatePassword(16)
-	//
-	//fmt.Println(newUser.password)
+	name, err := getInput("Enter account name", reader)
+	if err != nil {
+		color.Red("Failed to read from stdin:", err)
+		return
+	}
 
-	//fmt.Println(strings.Repeat("-", 20))
-	//fmt.Println(generatePassword(10))
+	url, err := getInput("Enter account URL", reader)
+	if err != nil {
+		color.Red("Failed to read from stdin:", err)
+		return
+	}
 
-	//modernUser, err := account.NewUserWithTimeStamp("Ivan", "", "https://ivan.ua")
-	//
-	//if err != nil {
-	//	panic(err)
-	//}
-	//
-	//fmt.Println(modernUser)
+	password, err := getInput("Enter account password (leave empty to generate)", reader)
+	if err != nil {
+		color.Red("Failed to read from stdin:", err)
+		return
+	}
 
-	files.WriteFile("Hello World, from GoLang!", "hello.txt")
+	user, err := account.NewUser(name, password, url)
+	if err != nil {
+		color.Red("Failed to read from stdin:", err)
+		return
+	}
 
+	files.WriteFile(user.ToBytes(), "data.json")
+}
+
+func getInput(label string, reader *bufio.Reader) (string, error) {
+
+	fmt.Print(label + ": ")
+	value, err := reader.ReadString('\n')
+
+	if err != nil {
+		fmt.Println("Error reading input:", err)
+		return "", err
+	}
+
+	return strings.TrimSpace(value), nil
 }

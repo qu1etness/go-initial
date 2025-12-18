@@ -1,52 +1,43 @@
 package account
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 	"math/rand"
 	"net/url"
+	"reflect"
 	"strings"
 	"time"
 
 	"github.com/fatih/color"
 )
 
-type account struct {
-	name     string
-	password string
-	url      string
+type Account struct {
+	Name      string    `json:"name"`
+	Password  string    `json:"password"`
+	Url       string    `json:"url"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-// Вбудовування (Унаслідування)
-
-type WithTimeStamp struct {
-	createdAt time.Time
-	updatedAt time.Time
-	account
+func (a *Account) outputPassword() {
+	color.Blue(a.Password)
 }
 
-type WithTimeStampAnalog struct {
-	createdAt time.Time
-	updatedAt time.Time
-	acc       account
-}
-
-func (a *account) outputPassword() {
-	color.Blue(a.password)
-}
-
-func (a *account) generatePassword(length int) string {
+func (a *Account) generatePassword(length int) string {
 	initialRunes := []rune(strings.ReplaceAll("abc d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z 1234567890-*@?!_", " ", ""))
 	result := ""
 
 	for i := 0; i < length; i++ {
 		result += string(initialRunes[rand.Intn(len(initialRunes))])
 	}
-	a.password = result
+	a.Password = result
 
 	return result
 }
 
-func newUser(name, password, urlString string) (*account, error) {
+func NewUser(name, password, urlString string) (*Account, error) {
 
 	if len(name) == 0 {
 		return nil, errors.New("THE_NAME_IS_EMPTY")
@@ -55,47 +46,27 @@ func newUser(name, password, urlString string) (*account, error) {
 	_, err := url.ParseRequestURI(urlString)
 
 	if err != nil {
-		return nil, errors.New("url does not contain a valid account")
+		return nil, errors.New("URL_IS_NOT_VALID")
 	}
 
-	user := account{name: name, url: urlString, password: password}
+	user := &Account{Name: name, Url: urlString, Password: password}
 
 	if len(password) == 0 {
 		user.generatePassword(16)
 	}
 
-	return &user, nil
+	value, isExist := reflect.TypeOf(user).Elem().FieldByName("name")
+	fmt.Println("Reflect output: ", value.Tag, isExist)
+
+	return user, nil
 }
 
-// Інкапсуляція (public/private) через великі/малі літери
-
-func NewUserWithTimeStamp(name, password, urlString string) (*WithTimeStamp, error) {
-
-	if name == "" {
-		return nil, errors.New("THE_NAME_IS_EMPTY")
-	}
-
-	_, err := url.ParseRequestURI(urlString)
-
-	if err != nil {
-		return nil, errors.New("THE_URL_IS_INVALID")
-	}
-
-	user := WithTimeStamp{
-		account:   account{name: name, url: urlString, password: password},
-		createdAt: time.Now(),
-		updatedAt: time.Now(),
-	}
-
-	if password == "" {
-		user.generatePassword(16)
-	}
-
-	return &user, nil
+func (a *Account) ToBytes() []byte {
+	byteSlice, _ := json.Marshal(a)
+	return byteSlice
 }
 
 func generatePassword(n int) string {
-
 	initialRunes := []rune(strings.ReplaceAll("abc d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z 1234567890-*@?!_", " ", ""))
 	result := ""
 
