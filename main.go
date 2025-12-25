@@ -4,12 +4,20 @@ import "fmt"
 
 func main() {
 	firstChanel := make(chan string)
+	secondChanel := make(chan string)
 
 	go func() {
 		firstChanel <- "Concurrency in Go!"
 	}()
 
-	msg := <-firstChanel
+	go func() {
+		secondChanel <- "Is fun!"
+	}()
 
-	fmt.Println(msg)
+	select {
+	case firstChanelMsg := <-firstChanel:
+		fmt.Println(firstChanelMsg)
+	case secondChanelMsg := <-secondChanel:
+		fmt.Println(secondChanelMsg)
+	}
 }
