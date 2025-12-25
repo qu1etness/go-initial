@@ -1,1 +1,6 @@
-{"name":"Bobil","password":"e1XI-I8wRlxbbRK8","url":"https://8.8.8.8","createdAt":"0001-01-01T00:00:00Z","updatedAt":"0001-01-01T00:00:00Z"}
+{"accounts":
+[{"name":"Dodik","password":"jt*HzbCNP305!so7","url":"https://1.2.3.4","createdAt":"0001-01-01T00:00:00Z","updatedAt":"0001-01-01T00:00:00Z"},
+  {"name":"Bolik","password":"izMPG!nR4!_QALrs","url":"https://4.3.2.1","createdAt":"0001-01-01T00:00:00Z","updatedAt":"0001-01-01T00:00:00Z"},
+  {"name":"Newest","password":"77hP6Bo*a*vQxlNn","url":"https://google.com","createdAt":"0001-01-01T00:00:00Z","updatedAt":"0001-01-01T00:00:00Z"},
+  {"name":"Mane","password":"wMyzJKYKhtyTCXzu","url":"https://192.168.0.0:8080","createdAt":"0001-01-01T00:00:00Z","updatedAt":"0001-01-01T00:00:00Z"}],
+  "updatedAt":"2025-12-23T01:37:18.9047892+02:00"}

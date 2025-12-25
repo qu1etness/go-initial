@@ -6,14 +6,14 @@ import (
 	"github.com/fatih/color"
 )
 
-func ReadFile(fileName string) (string, error) {
+func ReadFile(fileName string) ([]byte, error) {
 	data, err := os.ReadFile(fileName)
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return string(data), nil
+	return data, nil
 }
 
 func WriteFile(content []byte, fileName string) {
@@ -25,7 +25,13 @@ func WriteFile(content []byte, fileName string) {
 
 	_, err = file.Write(content)
 
-	defer file.Close()
+	defer func() {
+		err := file.Close()
+		if err != nil {
+			color.Red("Failed to close file:", err)
+		}
+	}()
+
 	if err != nil {
 		color.Red("Failed to write to file:", err)
 	}
