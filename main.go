@@ -2,22 +2,25 @@ package main
 
 import "fmt"
 
+// For-select statement in Go allows a goroutine to wait on multiple communication operations.
+
 func main() {
-	firstChanel := make(chan string)
-	secondChanel := make(chan string)
+	// unbuffered channel charChannel := make(chan string)
 
-	go func() {
-		firstChanel <- "Concurrency in Go!"
-	}()
+	//	buffered channel
+	charChannel := make(chan string, 3)
+	chat := [3]string{"a", "b", "c"}
 
-	go func() {
-		secondChanel <- "Is fun!"
-	}()
-
-	select {
-	case firstChanelMsg := <-firstChanel:
-		fmt.Println(firstChanelMsg)
-	case secondChanelMsg := <-secondChanel:
-		fmt.Println(secondChanelMsg)
+	for _, v := range chat {
+		select {
+		case charChannel <- v:
+		}
 	}
+
+	close(charChannel)
+
+	for result := range charChannel {
+		fmt.Println(result)
+	}
+
 }
