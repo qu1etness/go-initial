@@ -1,26 +1,34 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
-// For-select statement in Go allows a goroutine to wait on multiple communication operations.
+// Done-select statement in Go allows a goroutine to wait on multiple communication operations.
 
-func main() {
-	// unbuffered channel charChannel := make(chan string)
-
-	//	buffered channel
-	charChannel := make(chan string, 3)
-	chat := [3]string{"a", "b", "c"}
-
-	for _, v := range chat {
+func doWork(done <-chan bool) {
+	for {
 		select {
-		case charChannel <- v:
+		case <-done:
+			return
+		default:
+			fmt.Println("Work in progress...")
 		}
 	}
+}
 
-	close(charChannel)
+func main() {
 
-	for result := range charChannel {
-		fmt.Println(result)
-	}
+	startTime := time.Now()
+	doneChan := make(chan bool)
 
+	go doWork(doneChan)
+
+	time.Sleep(2 * time.Second)
+
+	close(doneChan)
+
+	duration := time.Since(startTime)
+	fmt.Println(duration)
 }
