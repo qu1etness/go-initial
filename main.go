@@ -1,34 +1,46 @@
 package main
 
-import (
-	"fmt"
-	"time"
-)
+import "fmt"
 
-// Done-select statement in Go allows a goroutine to wait on multiple communication operations.
-
-func doWork(done <-chan bool) {
-	for {
-		select {
-		case <-done:
-			return
-		default:
-			fmt.Println("Work in progress...")
-		}
-	}
-}
+// Pipelines
 
 func main() {
 
-	startTime := time.Now()
-	doneChan := make(chan bool)
+	initialValues := []int{2, 4, 6, 7, 1}
 
-	go doWork(doneChan)
+	//	Stage 1
+	dataChannel := sliceToChannel(initialValues)
+	//	Stage 2
+	finalChannel := sq(dataChannel)
+	//  Stage 3
 
-	time.Sleep(2 * time.Second)
+	for value := range finalChannel {
+		fmt.Println(value)
+	}
 
-	close(doneChan)
+}
 
-	duration := time.Since(startTime)
-	fmt.Println(duration)
+func sq(channel <-chan int) chan int {
+	outputChannel := make(chan int)
+
+	go func() {
+		for value := range channel {
+			outputChannel <- value * value
+		}
+		close(outputChannel)
+	}()
+	return outputChannel
+}
+
+func sliceToChannel(nums []int) <-chan int {
+	outputChannel := make(chan int)
+
+	go func() {
+		for _, number := range nums {
+			outputChannel <- number
+		}
+		close(outputChannel)
+	}()
+
+	return outputChannel
 }
