@@ -20,7 +20,7 @@ func main() {
 	defer close(done)
 
 	randIntFunc := func() int { return rand.Intn(500000000) }
-	stream := RepeatAnalog(done, randIntFunc)
+	stream := repeatAnalog(done, randIntFunc)
 	routines := fanOut(done, stream)
 	fannedInStream := fanIn(done, routines...)
 
@@ -92,21 +92,34 @@ func primeFinderAnalog[K bool, T Number](done <-chan K, inputChan <-chan T) <-ch
 		defer close(primeChan)
 
 		for {
-			select {
-			case <-done:
-				return
-			case pred := <-inputChan:
-				if findPrime(pred) {
-					primeChan <- pred
-				}
+			value := <-orDone(done, inputChan)
+
+			if findPrime(value) {
+				primeChan <- value
 			}
 		}
+
 	}()
+
+	//go func() {
+	//	defer close(primeChan)
+	//
+	//	for {
+	//		select {
+	//		case <-done:
+	//			return
+	//		case pred := <-inputChan:
+	//			if findPrime(pred) {
+	//				primeChan <- pred
+	//			}
+	//		}
+	//	}
+	//}()
 
 	return primeChan
 }
 
-func RepeatAnalog[K any, T Number](done <-chan K, f func() T) <-chan T {
+func repeatAnalog[K any, T Number](done <-chan K, f func() T) <-chan T {
 	output := make(chan T)
 
 	go func() {
@@ -130,16 +143,52 @@ func takeAnalog[K any, T Number](done <-chan K, inputChan <-chan T, border int) 
 		defer close(stream)
 
 		for i := 0; i < border; i++ {
+			stream <- <-orDone(done, inputChan)
+		}
+	}()
+
+	//go func() {
+	//	defer close(stream)
+	//
+	//	for i := 0; i < border; i++ {
+	//		select {
+	//		case <-done:
+	//			return
+	//		case stream <- <-inputChan:
+	//		}
+	//	}
+	//
+	//}()
+
+	return stream
+}
+
+func orDone[K any, T Number](done <-chan K, receivedChan <-chan T) <-chan T {
+
+	resultChan := make(chan T)
+
+	go func() {
+		defer close(resultChan)
+
+		for {
 			select {
 			case <-done:
 				return
-			case stream <- <-inputChan:
+			case v, ok := <-receivedChan:
+				if !ok {
+					return
+				}
+				select {
+				case resultChan <- v:
+				case <-done:
+					return
+				}
 			}
 		}
-
 	}()
 
-	return stream
+	return resultChan
+
 }
 
 func repeatFunction[T any, K any](done <-chan K, f func() T) <-chan T {
