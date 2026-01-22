@@ -101,21 +101,6 @@ func primeFinderAnalog[K bool, T Number](done <-chan K, inputChan <-chan T) <-ch
 
 	}()
 
-	//go func() {
-	//	defer close(primeChan)
-	//
-	//	for {
-	//		select {
-	//		case <-done:
-	//			return
-	//		case pred := <-inputChan:
-	//			if findPrime(pred) {
-	//				primeChan <- pred
-	//			}
-	//		}
-	//	}
-	//}()
-
 	return primeChan
 }
 
@@ -146,19 +131,6 @@ func takeAnalog[K any, T Number](done <-chan K, inputChan <-chan T, border int) 
 			stream <- <-orDone(done, inputChan)
 		}
 	}()
-
-	//go func() {
-	//	defer close(stream)
-	//
-	//	for i := 0; i < border; i++ {
-	//		select {
-	//		case <-done:
-	//			return
-	//		case stream <- <-inputChan:
-	//		}
-	//	}
-	//
-	//}()
 
 	return stream
 }
